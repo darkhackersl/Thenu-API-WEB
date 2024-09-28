@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THENU-MD API</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-touch-callout: none;
+    font-family: 'Roboto', sans-serif;
+    background-color: #000000;
+    color: #ccc;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+.container {
+    display: none;
+    /* Ensure the container takes up 100% of the parent width */
+    max-width: 1200%; /* Restrict the container to 100% of the viewport width */
+    padding: 20px;
+    background-color: rgba(34, 34, 34, 0.9);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    position: relative;
+    animation: fadeIn 2s ease-in-out;
+    box-sizing: border-box;
+    margin-top: 20px;
+    margin-left: auto; /* Aligns the container to the center */
+    margin-right: auto; /* Aligns the container to the center */
+    flex: 1;
+}
+
+.container::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    filter: blur(10px);
+    z-index: -1;
+}
+
+@media (min-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+}
+
+   
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        h2 {
+            color: #4caf50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        table {
+            user-select: none;
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border-radius: 8px;
+            transition: background-color 3s ease;
+        }
+        table, th, td {
+            border: 1px solid #bababa;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            transition: background-color 3s ease;
+        }
+        th {
+            background-color: #000000;
+            color: #4caf50;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #303030;
+        }
+        tr:hover {
+            background-color: #000000;
+        }
+        .status-active {
+            color: #4caf50;
+            font-weight: bold;
+        }
+        .button {
+    user-select: none;
+    padding: 6px 12px;
+    background-color: #4caf50;
+    color: #fff;
+    border: 2px solid #ffffff;
+    border-radius: 15px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+    display: block;
+    text-align: center;
+}
+
+.button:hover {
+    background-color: #388e3c;
+    transform: scale(1.05);
+    border-color: #1b5e20; /* Smoothly change the border color on hover */
+}
+
+        footer {
+    width: 100%;
+    background-color: #292c2e;
+    color: #e1e1e1;
+    text-align: center;
+    padding: 5px;
+    margin-top: 20px;
+    position: relative;
+    bottom: 0;
+    border-top: 1px solid #4CAF50;
+    font-size: 0.9rem;
+    font-family: 'Arial', sans-serif; /* Use Arial font */
+    font-weight: bold; /* Make the text bold */
+}
+
+
+        footer a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+        footer {
+                font-size: 0.8rem;
+        }
+        
+        .loading {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4caf50;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 0.6s linear infinite;
+            margin-bottom: 20px;
+        }
+        .loading-text {
+            color: #fff;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        .loading-bar {
+            width: 100%;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            width: 1%;
+            background-color: #4caf50;
+            border-radius: 5px;
+            animation: progress 2s ease-in-out forwards;
+        }
+        @keyframes progress {
+            0% { width: 1%; }
+            100% { width: 100%; }
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .nav-buttons {
+    display: flex;
+    justify-content: space-around; /* Change from 'center' to 'space-around' */
+    margin-bottom: 10px;
+}
+
+        .nav-button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  background-color: #333; /* Same background color as other buttons */
+  color: #fff;
+  border: none;
+  border-radius: 40px; /* Consistent round corners */
+  cursor: pointer;
+  transition: background-color 1s ease, transform 1s ease;
+}
+
+        .nav-button.active {
+            background-color: #4caf50;
+            transform: scale(1.1);
+        }
+        .nav-button:hover {
+            background-color: #555;
+        }
+        .table-highlight {
+            background-color: #2a2a2a;
+            border-color: #4caf50;
+        }
+        .table-fade {
+            animation: tableFade 1s ease-in-out forwards;
+        }
+        @keyframes tableFade {
+    from {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+    </style>
+</head>
+<body>
+    
+
+    <div class="loading">
+        <div class="loader"></div>
+        <div class="loading-text">Loading...</div>
+        <div class="loading-bar">
+            <div class="progress"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="nav-buttons">
+            <button class="nav-button" onclick="showTable('download')">Download</button>
+            <button class="nav-button" onclick="showTable('news')">News</button>
+            <button class="nav-button" onclick="showTable('search')">Search</button>
+            <button class="nav-button" onclick="showTable('ai')">AI</button>
+            <button class="nav-button" onclick="showTable('tools')">Tools</button>
+            <button class="nav-button" onclick="showTable('other')">Other</button>
+        </div>
+
+        <!-- Download APIs Table -->
+        <table id="download-table" class="table-highlight">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Parameter</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>All In One Video Downloader</td>
+                    <td>Download any videos or audios</td>
+                    <td>url</td>
+                    <td><a href="/api/avd?url=https://www.facebook.com/100069007765318/posts/725316089778643/?mibextid=rS40aB7S9Ucbxw6v&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Facebook Downloader</td>
+                    <td>Download fb Videos Or Audios</td>
+                    <td>url</td>
+                    <td><a href="/api/fdown?url=https://www.facebook.com/100069007765318/posts/725316089778643/?mibextid=rS40aB7S9Ucbxw6v" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Facebook Downloader V2</td>
+                    <td>Download fb Videos Or Audios</td>
+                    <td>url</td>
+                    <td><a href="/api/facebookdlv2?url=https://www.facebook.com/100069007765318/posts/725316089778643/?mibextid=rS40aB7S9Ucbxw6v&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Tiktok Downloader</td>
+                    <td>Download tikok Videos & Audios</td>
+                    <td>url</td>
+                    <td><a href="/api/tiktokdl?url=https://vm.tiktok.com/ZSY4o6Wg6/" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Tiktok Downloader V2</td>
+                    <td>Download tikok Videos & Audios</td>
+                    <td>url</td>
+                    <td><a href="/api/tiktokdlv2?url=https://vm.tiktok.com/ZSY4o6Wg6/&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Apk Downloader</td>
+                    <td>Download applications</td>
+                    <td>url</td>
+                    <td><a href="/api/apkdl?q=com.whatsapp&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Youtube mp4 Downloader</td>
+                    <td>Download Youtube Videos</td>
+                    <td>url</td>
+                    <td><a href="/api/ytmp4?url=https://youtu.be/6qpOoYIV4sw?si=XHy8hbgPkjEiJq0b&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Youtube mp3 Downloader</td>
+                    <td>Download Youtube Audios</td>
+                    <td>url</td>
+                    <td><a href="/api/ytmp3?url=https://youtu.be/6qpOoYIV4sw?si=XHy8hbgPkjEiJq0b&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>SoundCloud Downloader</td>
+                    <td>Download Soundcloud Audios</td>
+                    <td>url</td>
+                    <td><a href="/api/sclouddl?url=https://m.soundcloud.com/nilanhettiarachchi/lelena&apikey=YOUR_API_KEY" class="button">Check</a></td>
+            
+                </tr>
+                <tr>
+                    <td>Twitter (x.com) Downloader</td>
+                    <td>Download Twitter Video & Audios</td>
+                    <td>url</td>
+                    <td><a href="/api/twitterdl?url=https://twitter.com/i/status/1578737162757242881" class="button">Check</a></td>
+           
+                </tr>
+                <tr>
+                    <td>Twitter (x.com) Downloader V2</td>
+                    <td>Download Twitter Video & Audios</td>
+                    <td>url</td>
+                    <td><a href="/api/twitterv2?url=https://twitter.com/i/status/1578737162757242881&apikey=YOUR_API_KEY" class="button">Check</a></td>
+           
+                </tr>
+                <tr>
+                    <td>Gdrive Downloader</td>
+                    <td>Download Gdrive Files</td>
+                    <td>url</td>
+                    <td><a href="/api/gdrivedl?url=https://drive.google.com/file/d/19qZTdlfPQLZrVYo_S02ChWX8Tc1Tyk5A/view?usp=drivesdk" class="button">Check</a></td>
+            
+                </tr>
+                <tr>
+                    <td>Mediafire Downloader</td>
+                    <td>Download Mediafire Files</td>
+                    <td>url</td>
+                    <td><a href="/api/mediafiredl?url=https://www.mediafire.com/file/nshlhexil1pgib1/cyberresilience-and-AI-768x430.webp/file" class="button">Check</a></td>
+           
+                </tr>
+                <tr>
+                    <td>Mediafire Downloader V2</td>
+                    <td>Download Mediafire Files</td>
+                    <td>url</td>
+                    <td><a href="/api/mediafiredlv2?url=https://www.mediafire.com/file/nshlhexil1pgib1/cyberresilience-and-AI-768x430.webp/file" class="button">Check</a></td>
+           
+                </tr>
+                <tr>
+                    <td>Spotify Downloader</td>
+                    <td>Download Spotify audios</td>
+                    <td>url</td>
+                    <td><a href="/api/spotifydl?url=https://open.spotify.com/track/279Nwof7njzaABwYutjXSj?si=c9f11b0a0bce4327&apikey=YOUR_API_KEY" class="button">Check</a></td>
+           
+                </tr>
+                <tr>
+                    <td>Xvideos Downloader</td>
+                    <td>Download Xvideos</td>
+                    <td>url</td>
+                    <td><a href="/api/xvdl?url=https://www.xvideos.com/video.udileuke8f2/36421487/0/real_little_stepsister_and_big_stepbrother_hardcore_sex_in_hindi_audio&apikey=YOUR_API_KEY" class="button">Check</a></td>
+              
+                </tr>
+                <tr>
+                    <td>Xvideos Downloader V2</td>
+                    <td>Download Xvideos</td>
+                    <td>url</td>
+                    <td><a href="/api/xvideodownloadv2?url=https://www.xvideos.com/video.udileuke8f2/36421487/0/real_little_stepsister_and_big_stepbrother_hardcore_sex_in_hindi_audio&apikey=YOUR_API_KEY" class="button">Check</a></td>
+              
+                </tr>
+                <tr>
+                    <td>Xnxx Downloader</td>
+                    <td>Download Xnxx Videos</td>
+                    <td>url</td>
+                    <td><a href="/api/xnxxdl?url=https://www.xnxx.com/video-x2uttb2/fucking_with_the_neighbor&apikey=YOUR_API_KEY" class="button">Check</a></td>
+              
+                </tr>
+                <tr>
+                    <td>Sinhalasub movie Downloader</td>
+                    <td>Download movies</td>
+                    <td>url</td>
+                    <td><a href="/api/sinmoviedl?url=https://sinhalasub.lk/movies/avatar-the-way-of-water-2022-sinhala-subtitles/&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- News APIs Table -->
+        <table id="news-table" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Parameter</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Derana News (Srilanka news)</td>
+                    <td>Fetch last derana news</td>
+                    <td>-</td>
+                    <td><a href="/api/derananews?apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Esana News (Srilanka news)</td>
+                    <td>Fetch last Esana news</td>
+                    <td>-</td>
+                    <td><a href="/api/esananews?apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Sporty News (Srilanka news)</td>
+                    <td>Fetch last Sporty news</td>
+                    <td>-</td>
+                    <td><a href="/api/sportynews?apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+            </tbody>
+        </table>
+
+<!-- Search APIs Table -->
+        <table id="search-table" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Parameter</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>tiktok Search</td>
+                    <td>Search tiktok Videos & Songs</td>
+                    <td>q</td>
+                    <td><a href="/api/tiktoksearch?q=new&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Spotify Search</td>
+                    <td>Search Spotify Songs</td>
+                    <td>q</td>
+                    <td><a href="/api/spotifysearch?q=lelena&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Apk Search</td>
+                    <td>Search applications</td>
+                    <td>q</td>
+                    <td><a href="/api/apksearch?q=whatsapp&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Sticker Search</td>
+                    <td>Search stickers</td>
+                    <td>q</td>
+                    <td><a href="/api/stickersearch?q=cat&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Npm Search</td>
+                    <td>Search npms</td>
+                    <td>q</td>
+                    <td><a href="/api/npmsearch?q=axios&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Wikipedia</td>
+                    <td>Search wikipedia</td>
+                    <td>q</td>
+                    <td><a href="/api/wikipedia?q=whatsapp&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>wallpaper Search</td>
+                    <td>Search wallpapers</td>
+                    <td>q</td>
+                    <td><a href="/api/wallpapersearch?q=car&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Pinterest Search</td>
+                    <td>Search Pinterest images</td>
+                    <td>q</td>
+                    <td><a href="/api/pinterestsearch?q=car&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Xnxx Search</td>
+                    <td>Search Xnxx Videos</td>
+                    <td>q</td>
+                    <td><a href="/api/xnxxsearch?q=new&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Xvideo Search</td>
+                    <td>Search Xvideos </td>
+                    <td>q</td>
+                    <td><a href="/api/xvideosearchv2?q=new&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Xvideo Search V2</td>
+                    <td>Search Xvideos </td>
+                    <td>q</td>
+                    <td><a href="/api/xvideossearch?q=new&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Xvideo Search V3</td>
+                    <td>Search Xvideos </td>
+                    <td>q</td>
+                    <td><a href="/api/xvideossearchv2?q=new&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Find Github User</td>
+                    <td>Search Github User </td>
+                    <td>q</td>
+                    <td><a href="/api/githubuser?q=prabathLK&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Google Images Search</td>
+                    <td>Search Google images </td>
+                    <td>q</td>
+                    <td><a href="/api/googleimages?q=alone&apikey=YOUR_API_KEY" class="button">Check</a></td>
+               </tr>
+                <tr>
+                    <td>SoundCloud Search</td>
+                    <td>Search SoundCloud Audios </td>
+                    <td>q</td>
+                    <td><a href="/api/soundcloudsearch?q=lelena&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Unsplash Search</td>
+                    <td>Search Unsplash images </td>
+                    <td>q</td>
+                    <td><a href="/api/unsplashsearch?q=car&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Pixabay Search</td>
+                    <td>Search Pixabay images </td>
+                    <td>q</td>
+                    <td><a href="/api/pixabaysearch?q=car&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Npm Search</td>
+                    <td>Search npm packages </td>
+                    <td>q</td>
+                    <td><a href="/api/npmsearchv2?q=axios&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Wallpaper Search V2</td>
+                    <td>Search hd wallpapers </td>
+                    <td>q</td>
+                    <td><a href="/api/wallpaperhd?q=new&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>apkmirror Search</td>
+                    <td>Search apk from apkmirror </td>
+                    <td>q</td>
+                    <td><a href="/api/apkmirror?q=whatsapp&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>an1apk Search</td>
+                    <td>Search apk from an1apk </td>
+                    <td>q</td>
+                    <td><a href="/api/an1apk?q=whatsapp&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Sinhalasub movie Search</td>
+                    <td>Search movies</td>
+                    <td>q</td>
+                    <td><a href="/api/sinmoviesearch?q=avatar&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Sinhalasub tvShow Search</td>
+                    <td>Search Tv shows</td>
+                    <td>url</td>
+                    <td><a href="/api/sintvshow?url=https://sinhalasub.lk/tvshows/brand-new-cherry-flavor-2021-sinhala-subtitles/&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+            </tbody>
+        </table>
+        
+    <!-- Ai APIs Table -->
+        <table id="ai-table" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Parameter</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Chat GPT V1</td>
+                    <td>Chat with gpt</td>
+                    <td>q</td>
+                    <td><a href="/api/gptv1?q=hello&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Chat GPT V2</td>
+                    <td>Chat with gpt</td>
+                    <td>q</td>
+                    <td><a href="/api/gptv2?q=hello&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Chat GPT V3</td>
+                    <td>Chat with gpt</td>
+                    <td>q</td>
+                    <td><a href="/api/gptv3?q=hello&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Chat GPT V4</td>
+                    <td>Chat with gpt</td>
+                    <td>q</td>
+                    <td><a href="/api/gptv4?q=hello&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Chat GPT V5</td>
+                    <td>Chat with gpt</td>
+                    <td>q</td>
+                    <td><a href="/api/gptv5?q=hello&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Imagine V1</td>
+                    <td>imagine ai</td>
+                    <td>q</td>
+                    <td><a href="/api/gptimgv1?q=girl&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Imagine V2</td>
+                    <td>imagine ai</td>
+                    <td>q</td>
+                    <td><a href="/api/gptimgv2?q=girl&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Imagine V3</td>
+                    <td>imagine ai</td>
+                    <td>q</td>
+                    <td><a href="/api/gptimgv3?q=girl&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Imagine V4</td>
+                    <td>imagine ai</td>
+                    <td>q</td>
+                    <td><a href="/api/gptimgv4?q=girl&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Imagine V5</td>
+                    <td>imagine ai</td>
+                    <td>q</td>
+                    <td><a href="/api/gptimgv5?q=girl&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Imagine V6</td>
+                    <td>imagine ai</td>
+                    <td>q</td>
+                    <td><a href="/api/gptimgv6?q=girl&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Imagine V7</td>
+                    <td>imagine ai</td>
+                    <td>q</td>
+                    <td><a href="/api/imaginev7?q=girl&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                </tbody>
+        </table>  
+        
+       <!-- Tools APIs Table -->
+        <table id="tools-table" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Parameter</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Style text</td>
+                    <td>styletext</td>
+                    <td>q</td>
+                    <td><a href="/api/styletext?q=prabath&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Attp</td>
+                    <td>attp</td>
+                    <td>q</td>
+                    <td><a href="/api/attp?q=prabath&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>ttp</td>
+                    <td>ttp</td>
+                    <td>q</td>
+                    <td><a href="/api/ttp?q=prabath&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>image to text</td>
+                    <td>When you give a url of an image, the text in it is extracted</td>
+                    <td>url</td>
+                    <td><a href="/api/img2text?url=https://telegra.ph/file/58b60aa500da93eecd6bb.jpg&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>tiktok_tts</td>
+                    <td>tiktok text to voice convert</td>
+                    <td>url</td>
+                    <td><a href="/api/tiktoktts?q=hello&model=en_us_006&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>tiktok_tts models</td>
+                    <td>get tiktok text to voice convert models</td>
+                    <td>url</td>
+                    <td><a href="/api/tiktokttsmodel?q=all&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>removebg</td>
+                    <td>remove the background of an image</td>
+                    <td>url</td>
+                    <td><a href="/api/removebg?url=https://telegra.ph/file/58b60aa500da93eecd6bb.jpg&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>remini</td>
+                    <td>Increases the quality of an image</td>
+                    <td>url</td>
+                    <td><a href="/api/remini?url=https://telegra.ph/file/58b60aa500da93eecd6bb.jpg&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+       </tbody>
+        </table>   
+<!-- Other APIs Table -->
+        <table id="other-table" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Parameter</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Darkness</td>
+                    <td>Make Darkness image  given url</td>
+                    <td>q</td>
+                    <td><a href="/api/darkness?url=https://telegra.ph/file/601bfada8b4e684f2c778.jpg&no=50&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Blur</td>
+                    <td>Make Blur image  given url</td>
+                    <td>q</td>
+                    <td><a href="/api/blur?url=https://telegra.ph/file/601bfada8b4e684f2c778.jpg&no=50&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Remini</td>
+                    <td>Make hight quality image  given url</td>
+                    <td>q</td>
+                    <td><a href="/api/remini?url=https://telegra.ph/file/601bfada8b4e684f2c778.jpg&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                <tr>
+                    <td>Lyric</td>
+                    <td>Find Lyrics</td>
+                    <td>q</td>
+                    <td><a href="/api/lyric?q=alone&apikey=YOUR_API_KEY" class="button">Check</a></td>
+                </tr>
+                
+       </tbody>
+        </table>   
+
+        
+    </div>
+
+        <footer>
+        <p>&copy; 2024 - <span id="currentYear"></span> Developed by Thenula Panapiti. All rights reserved to Prabath Kumara.</p>
+    </footer>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                document.querySelector('.loading').style.display = 'none';
+                document.querySelector('.container').style.display = 'block';
+                document.querySelector('.progress').style.backgroundColor = '#4caf50';
+            }, 2000);
+        });
+
+        function showTable(table) {
+            const tables = document.querySelectorAll('table');
+            const buttons = document.querySelectorAll('.nav-button');
+            
+            tables.forEach(t => {
+                t.classList.remove('table-highlight', 'table-fade');
+                t.style.display = 'none';
+            });
+            buttons.forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(table + '-table').style.display = 'table';
+            document.getElementById(table + '-table').classList.add('table-highlight', 'table-fade');
+            event.target.classList.add('active');
+        }
+        function updateFooterYear() {
+            const currentYear = new Date().getFullYear();
+            document.getElementById('currentYear').textContent = currentYear;
+        }
+        
+        updateFooterYear();
+    </script>
+
+</body>
+</html>
